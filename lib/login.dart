@@ -1,14 +1,85 @@
 import 'animations/FadeAnimation.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:fillme/registration.dart';
-import 'package:fillme/mapHome.dart';
+import 'home_sidebar.dart';
 
-void main() => runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-    ));
+class LoginPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _LoginPage();
+  }
+}
 
-class LoginPage extends StatelessWidget {
+class _LoginPage extends State<LoginPage> {
+  final TextEditingController _passwordController = new TextEditingController();
+  final TextEditingController _emailController = new TextEditingController();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  String _email;
+  String _password;
+  String _errorMsg = "";
+  String _successMsg = "";
+
+  void _submit() async {
+    if (validate()) {
+      try {
+        print(_email);
+        print(_password);
+
+        AuthResult result = await _firebaseAuth.signInWithEmailAndPassword(
+            email: _email, password: _password);
+        FirebaseUser user = result.user;
+        String userId = user.uid;
+
+        print("login user  =" + userId);
+        _successMsg = "Successfully Login";
+        _errorMsg = "Successfully Login";
+        showAlertDialog();
+
+      } catch (e) {
+        print("Error = " + e.toString());
+        _errorMsg = e.code;
+         showAlertDialog();
+      }
+    } else {
+      showAlertDialog();
+    }
+  }
+
+  Widget _emailField() {
+    return TextFormField(
+      decoration: InputDecoration(
+        hintText: "Email",
+        hintStyle: TextStyle(color: Colors.grey),
+      ),
+      keyboardType: TextInputType.emailAddress,
+      style: TextStyle(fontSize: 16, color: Colors.black),
+      cursorColor: Colors.black,
+      controller: _emailController,
+      onSaved: (input) => setState(() {
+        _email = input;
+      }),
+    );
+  }
+
+  Widget _passwordField() {
+    return TextFormField(
+      decoration: InputDecoration(
+        hintText: "Password",
+        hintStyle: TextStyle(color: Colors.grey),
+      ),
+      style: TextStyle(fontSize: 16, color: Colors.black),
+      cursorColor: Colors.black,
+      obscureText: true,
+      controller: _passwordController,
+      onSaved: (input) => setState(() {
+        _password = input;
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,34 +150,8 @@ class LoginPage extends StatelessWidget {
                                   ]),
                               child: Column(
                                 children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: Colors.grey[200]))),
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                          hintText: "Email or Phone number",
-                                          hintStyle:
-                                              TextStyle(color: Colors.grey),
-                                          border: InputBorder.none),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: Colors.grey[200]))),
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                          hintText: "Password",
-                                          hintStyle:
-                                              TextStyle(color: Colors.grey),
-                                          border: InputBorder.none),
-                                    ),
-                                  ),
+                                  _emailField(),
+                                  _passwordField(),
                                 ],
                               ),
                             )),
@@ -135,14 +180,7 @@ class LoginPage extends StatelessWidget {
                                   "Login",
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            MyMapHome(),
-                                      ));
-                                },
+                                onPressed: _submit,
                               ),
                             )),
                         SizedBox(
@@ -241,6 +279,61 @@ class LoginPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  bool validate() {
+    setState(() {
+      _email = _emailController.text;
+      _password = _passwordController.text;
+    });
+    if ((_email.isEmpty && _password.isEmpty) ||
+        _email.isEmpty ||
+        _password.isEmpty) {
+      _errorMsg = "Missing Required Fields";
+      return false;
+    } else if (!RegExp(
+            r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+        .hasMatch(_email)) {
+      _errorMsg = "Please enter a valid email address";
+      return false;
+    } else if (_password.length < 6) {
+      _errorMsg = "Password must be 6 characters";
+      return false;
+    } else {
+     
+      return true;
+    }
+  }
+
+  showAlertDialog() {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        if (_successMsg != "") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => HomePageWithSideBar(),
+            ));
+        } else {
+         Navigator.pop(context);   
+        }
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text('Message'),
+      content: Text(_errorMsg),
+      actions: <Widget>[
+        okButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

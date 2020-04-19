@@ -1,14 +1,136 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'animations/FadeAnimation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:fillme/login.dart';
-import 'package:fillme/mapHome.dart';
+//import 'package:fillme/mapHome.dart';
+import 'home_sidebar.dart';
 
-void main() => runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: RegistrationPage(),
-    ));
+class RegistrationPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _RegistrationPage();
+  }
+}
 
-class RegistrationPage extends StatelessWidget {
+class _RegistrationPage extends State<RegistrationPage> {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  final TextEditingController _passwordController = new TextEditingController();
+  final TextEditingController _emailController = new TextEditingController();
+  final TextEditingController _vPasswordController =
+      new TextEditingController();
+  final TextEditingController _nameController = new TextEditingController();
+
+  String errorMessage = "";
+  String _email;
+  String _password;
+  String _verifyPwd;
+  String _errorMsg;
+  String _successMsg = "";
+  String _name;
+
+  void _submitForm() async {
+    if (validate()) {
+      try {
+        print(_email);
+        print(_password);
+
+        AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
+            email: _email, password: _password);
+
+        UserUpdateInfo userUpdateInfo = new UserUpdateInfo();
+
+        userUpdateInfo.displayName = _name;
+        FirebaseUser user = result.user;
+        String userId = user.uid;
+        print("new user  =" + userId);
+        
+        user.updateProfile(userUpdateInfo).then((onValue) {
+          Firestore.instance.collection('users').document().setData({
+            'uid': userId,
+            'email': _email,
+            'displayName': _name
+          }).then((onValue) {
+            _errorMsg = "Successfully Register";
+            _successMsg = "Successfully Register";
+            showAlertDialog();
+          });
+        });
+      } catch (e) {
+        print("EError = " + e.code);
+        print("Err = " + e.toString());
+        print("E = " + e);
+        _errorMsg = e.code;
+        showAlertDialog();
+      }
+    } else {
+      showAlertDialog();
+    }
+  }
+
+  Widget _nameField() {
+    return TextFormField(
+      decoration: InputDecoration(
+        hintText: "Name",
+        hintStyle: TextStyle(color: Colors.grey),
+      ),
+      keyboardType: TextInputType.emailAddress,
+      style: TextStyle(fontSize: 16, color: Colors.black),
+      cursorColor: Colors.black,
+      controller: _nameController,
+    );
+  }
+
+  Widget _emailField() {
+    return TextFormField(
+      decoration: InputDecoration(
+        hintText: "Email",
+        hintStyle: TextStyle(color: Colors.grey),
+      ),
+      keyboardType: TextInputType.emailAddress,
+      style: TextStyle(fontSize: 16, color: Colors.black),
+      cursorColor: Colors.black,
+      controller: _emailController,
+      onSaved: (input) => setState(() {
+        _email = input;
+      }),
+    );
+  }
+
+  Widget _passwordField() {
+    return TextFormField(
+      decoration: InputDecoration(
+        hintText: "Password",
+        hintStyle: TextStyle(color: Colors.grey),
+      ),
+      style: TextStyle(fontSize: 16, color: Colors.black),
+      cursorColor: Colors.black,
+      obscureText: true,
+      controller: _passwordController,
+      onSaved: (input) => setState(() {
+        _password = input;
+      }),
+    );
+  }
+
+  Widget _verifyPasswordField() {
+    return TextFormField(
+      decoration: InputDecoration(
+        hintText: "Verify Password",
+        hintStyle: TextStyle(color: Colors.grey),
+      ),
+      style: TextStyle(fontSize: 16, color: Colors.black),
+      cursorColor: Colors.black,
+      obscureText: true,
+      controller: _vPasswordController,
+      onSaved: (input) => setState(() {
+        _verifyPwd = input;
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,48 +201,10 @@ class RegistrationPage extends StatelessWidget {
                                   ]),
                               child: Column(
                                 children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: Colors.grey[200]))),
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                          hintText: "Email or Phone number",
-                                          hintStyle:
-                                              TextStyle(color: Colors.grey),
-                                          border: InputBorder.none),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: Colors.grey[200]))),
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                          hintText: "Password",
-                                          hintStyle:
-                                              TextStyle(color: Colors.grey),
-                                          border: InputBorder.none),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: Colors.grey[200]))),
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                          hintText: "Verify Password",
-                                          hintStyle:
-                                              TextStyle(color: Colors.grey),
-                                          border: InputBorder.none),
-                                    ),
-                                  ),
+                                  _nameField(),
+                                  _emailField(),
+                                  _passwordField(),
+                                  _verifyPasswordField(),
                                 ],
                               ),
                             )),
@@ -140,14 +224,7 @@ class RegistrationPage extends StatelessWidget {
                                   "Register",
                                   style: TextStyle(color: Colors.white),
                                 ),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            MyMapHome(),
-                                      ));
-                                },
+                                onPressed: _submitForm,
                               ),
                             )),
                         SizedBox(
@@ -246,6 +323,64 @@ class RegistrationPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  bool validate() {
+    setState(() {
+      _email = _emailController.text;
+      _password = _passwordController.text;
+      _verifyPwd = _vPasswordController.text;
+      _name = _nameController.text;
+    });
+    print(_name);
+    if (_email.isEmpty || _password.isEmpty || _name.isEmpty) {
+      _errorMsg = "Missing Required Fields";
+      return false;
+    } else if (!RegExp(
+            r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+        .hasMatch(_email)) {
+      _errorMsg = "Please enter a valid email address";
+      return false;
+    } else if (_password.length < 6) {
+      _errorMsg = "Password must be 6 characters";
+      return false;
+    } else if (_verifyPwd != _password) {
+      _errorMsg = "Passwords do not match";
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  showAlertDialog() {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        if (_successMsg != "") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => HomePageWithSideBar(),
+              ));
+        } else {
+          Navigator.pop(context);
+        }
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text('Message'),
+      content: Text(_errorMsg),
+      actions: <Widget>[
+        okButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

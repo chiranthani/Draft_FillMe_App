@@ -3,8 +3,8 @@ import 'animations/FadeAnimation.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:fillme/login.dart';
 
-void main() => runApp(
-    MaterialApp(debugShowCheckedModeBanner: false, home: SplashScreen()));
+// void main() => runApp(
+//     MaterialApp(debugShowCheckedModeBanner: false, home: SplashScreen()));
 
 class SplashScreen extends StatefulWidget {
   _SpachScreenState createState() => _SpachScreenState();
