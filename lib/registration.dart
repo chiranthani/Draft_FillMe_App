@@ -46,7 +46,7 @@ class _RegistrationPage extends State<RegistrationPage> {
         FirebaseUser user = result.user;
         String userId = user.uid;
         print("new user  =" + userId);
-        
+
         user.updateProfile(userUpdateInfo).then((onValue) {
           Firestore.instance.collection('users').document().setData({
             'uid': userId,
@@ -59,10 +59,9 @@ class _RegistrationPage extends State<RegistrationPage> {
           });
         });
       } catch (e) {
-        print("EError = " + e.code);
+        print("EError = " + e.toString());
         print("Err = " + e.toString());
-        print("E = " + e);
-        _errorMsg = e.code;
+        _errorMsg = e.toString();
         showAlertDialog();
       }
     } else {
@@ -75,10 +74,11 @@ class _RegistrationPage extends State<RegistrationPage> {
       decoration: InputDecoration(
         hintText: "Name",
         hintStyle: TextStyle(color: Colors.grey),
+        border: InputBorder.none,
       ),
+      textAlign: TextAlign.center,
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(fontSize: 16, color: Colors.black),
-      cursorColor: Colors.black,
       controller: _nameController,
     );
   }
@@ -88,10 +88,11 @@ class _RegistrationPage extends State<RegistrationPage> {
       decoration: InputDecoration(
         hintText: "Email",
         hintStyle: TextStyle(color: Colors.grey),
+        border: InputBorder.none,
       ),
+      textAlign: TextAlign.center,
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(fontSize: 16, color: Colors.black),
-      cursorColor: Colors.black,
       controller: _emailController,
       onSaved: (input) => setState(() {
         _email = input;
@@ -104,9 +105,10 @@ class _RegistrationPage extends State<RegistrationPage> {
       decoration: InputDecoration(
         hintText: "Password",
         hintStyle: TextStyle(color: Colors.grey),
+        border: InputBorder.none,
       ),
+      textAlign: TextAlign.center,
       style: TextStyle(fontSize: 16, color: Colors.black),
-      cursorColor: Colors.black,
       obscureText: true,
       controller: _passwordController,
       onSaved: (input) => setState(() {
@@ -120,9 +122,10 @@ class _RegistrationPage extends State<RegistrationPage> {
       decoration: InputDecoration(
         hintText: "Verify Password",
         hintStyle: TextStyle(color: Colors.grey),
+        border: InputBorder.none,
       ),
+      textAlign: TextAlign.center,
       style: TextStyle(fontSize: 16, color: Colors.black),
-      cursorColor: Colors.black,
       obscureText: true,
       controller: _vPasswordController,
       onSaved: (input) => setState(() {
@@ -149,7 +152,7 @@ class _RegistrationPage extends State<RegistrationPage> {
               height: 60,
             ),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -181,30 +184,107 @@ class _RegistrationPage extends State<RegistrationPage> {
                         topRight: Radius.circular(40))),
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(20),
                     child: Column(
                       children: <Widget>[
                         SizedBox(
-                          height: 30,
+                          height: 10,
                         ),
                         FadeAnimation(
                             1.4,
                             Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color.fromRGBO(0, 200, 220, 10),
-                                        blurRadius: 20,
-                                        offset: Offset(0, 8))
-                                  ]),
                               child: Column(
                                 children: <Widget>[
-                                  _nameField(),
-                                  _emailField(),
-                                  _passwordField(),
-                                  _verifyPasswordField(),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  FadeAnimation(
+                                    1.4,
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Color.fromRGBO(
+                                                    0, 200, 220, 10),
+                                                blurRadius: 20,
+                                                offset: Offset(0, 5))
+                                          ]),
+                                      child: Column(
+                                        children: <Widget>[_nameField()],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  FadeAnimation(
+                                    1.4,
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Color.fromRGBO(
+                                                    0, 200, 220, 10),
+                                                blurRadius: 20,
+                                                offset: Offset(0, 5))
+                                          ]),
+                                      child: Column(
+                                        children: <Widget>[_emailField()],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  FadeAnimation(
+                                    1.4,
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Color.fromRGBO(
+                                                    0, 200, 220, 10),
+                                                blurRadius: 20,
+                                                offset: Offset(0, 5))
+                                          ]),
+                                      child: Column(
+                                        children: <Widget>[_passwordField()],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  FadeAnimation(
+                                    1.4,
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Color.fromRGBO(
+                                                    0, 200, 220, 10),
+                                                blurRadius: 20,
+                                                offset: Offset(0, 5))
+                                          ]),
+                                      child: Column(
+                                        children: <Widget>[
+                                          _verifyPasswordField()
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             )),
@@ -215,6 +295,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                             1.6,
                             Container(
                               height: 45,
+                              width: 150,
                               margin: EdgeInsets.symmetric(horizontal: 45),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(45),
@@ -228,88 +309,43 @@ class _RegistrationPage extends State<RegistrationPage> {
                               ),
                             )),
                         SizedBox(
-                          height: 25,
+                          height: 5,
                         ),
                         FadeAnimation(
                             1.7,
-                            Text(
-                              "Continue with social media",
-                              style: TextStyle(color: Colors.grey),
-                            )),
-                        SizedBox(
-                          height: 17,
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: FadeAnimation(
-                                  1.8,
-                                  Container(
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(45),
-                                        color: Colors.blue),
-                                    child: Center(
-                                      child: Text(
-                                        "Facebook",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 50,
+                                right: 10,
+                                bottom: 10,
+                              ),
+                              child: Center(
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Already have an account? ",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    Container(
+                                      child: FlatButton(
+                                        child: Text(
+                                          "Login",
+                                          style: TextStyle(color: Colors.blue),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        LoginPage(),
+                                              ));
+                                        },
                                       ),
                                     ),
-                                  )),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: FadeAnimation(
-                                  1.9,
-                                  Container(
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(45),
-                                        color: Colors.orange[900]),
-                                    child: Center(
-                                      child: Text(
-                                        "Gmail",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  )),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        FadeAnimation(
-                            1.7,
-                            Row(
-                              children: <Widget>[
-                                Text(
-                                  "Already have an account? ",
-                                  style: TextStyle(color: Colors.grey),
+                                  ],
                                 ),
-                                Container(
-                                  child: FlatButton(
-                                    child: Text(
-                                      "Login",
-                                      style: TextStyle(color: Colors.blue),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                LoginPage(),
-                                          ));
-                                    },
-                                  ),
-                                ),
-                              ],
+                              ),
                             )),
                         SizedBox(
                           height: 5,

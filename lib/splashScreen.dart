@@ -171,7 +171,7 @@ class _SpachScreenState extends State<SplashScreen>
                   FadeAnimation(
                       1.3,
                       Text(
-                        "Testing text comes here.. we can add what \n ever we wants to",
+                        "The official app for the largest chain of \n filling stations in Sri Lanka",
                         style: TextStyle(
                             color: Colors.white.withOpacity(.7), height: 1.4),
                       )),

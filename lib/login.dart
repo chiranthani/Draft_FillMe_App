@@ -37,11 +37,10 @@ class _LoginPage extends State<LoginPage> {
         _successMsg = "Successfully Login";
         _errorMsg = "Successfully Login";
         showAlertDialog();
-
       } catch (e) {
         print("Error = " + e.toString());
         _errorMsg = e.code;
-         showAlertDialog();
+        showAlertDialog();
       }
     } else {
       showAlertDialog();
@@ -53,10 +52,11 @@ class _LoginPage extends State<LoginPage> {
       decoration: InputDecoration(
         hintText: "Email",
         hintStyle: TextStyle(color: Colors.grey),
+        border: InputBorder.none,
       ),
+      textAlign: TextAlign.center,
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(fontSize: 16, color: Colors.black),
-      cursorColor: Colors.black,
       controller: _emailController,
       onSaved: (input) => setState(() {
         _email = input;
@@ -69,9 +69,10 @@ class _LoginPage extends State<LoginPage> {
       decoration: InputDecoration(
         hintText: "Password",
         hintStyle: TextStyle(color: Colors.grey),
+        border: InputBorder.none,
       ),
+      textAlign: TextAlign.center,
       style: TextStyle(fontSize: 16, color: Colors.black),
-      cursorColor: Colors.black,
       obscureText: true,
       controller: _passwordController,
       onSaved: (input) => setState(() {
@@ -130,47 +131,73 @@ class _LoginPage extends State<LoginPage> {
                         topRight: Radius.circular(40))),
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.all(17),
+                    padding: EdgeInsets.all(20),
                     child: Column(
                       children: <Widget>[
                         SizedBox(
-                          height: 20,
+                          height: 55,
                         ),
                         FadeAnimation(
-                            1.4,
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color.fromRGBO(0, 200, 220, 10),
-                                        blurRadius: 20,
-                                        offset: Offset(0, 10))
-                                  ]),
-                              child: Column(
-                                children: <Widget>[
-                                  _emailField(),
-                                  _passwordField(),
-                                ],
-                              ),
-                            )),
+                          1.4,
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(50),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Color.fromRGBO(0, 200, 220, 10),
+                                      blurRadius: 20,
+                                      offset: Offset(0, 5))
+                                ]),
+                            child: Column(
+                              children: <Widget>[_emailField()],
+                            ),
+                          ),
+                        ),
                         SizedBox(
-                          height: 20,
+                          height: 10,
+                        ),
+                        FadeAnimation(
+                          1.4,
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(50),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Color.fromRGBO(0, 200, 220, 10),
+                                      blurRadius: 20,
+                                      offset: Offset(0, 5))
+                                ]),
+                            child: Column(
+                              children: <Widget>[_passwordField()],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
                         FadeAnimation(
                             1.5,
-                            Text(
-                              "Forgot Password?",
-                              style: TextStyle(color: Colors.grey),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 200,
+                                right: 5,
+                                bottom: 10,
+                              ),
+                              child: Text(
+                                "Forgot Password?",
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             )),
                         SizedBox(
-                          height: 20,
+                          height: 40,
                         ),
                         FadeAnimation(
                             1.6,
                             Container(
                               height: 45,
+                              width: 150,
                               margin: EdgeInsets.symmetric(horizontal: 45),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(45),
@@ -184,88 +211,40 @@ class _LoginPage extends State<LoginPage> {
                               ),
                             )),
                         SizedBox(
-                          height: 30,
-                        ),
-                        FadeAnimation(
-                            1.7,
-                            Text(
-                              "Continue with social media",
-                              style: TextStyle(color: Colors.grey),
-                            )),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: FadeAnimation(
-                                  1.8,
-                                  Container(
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(45),
-                                        color: Colors.blue),
-                                    child: Center(
-                                      child: Text(
-                                        "Facebook",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  )),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: FadeAnimation(
-                                  1.9,
-                                  Container(
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(45),
-                                        color: Colors.orange[900]),
-                                    child: Center(
-                                      child: Text(
-                                        "Gmail",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
                           height: 10,
                         ),
                         FadeAnimation(
                             1.7,
-                            Row(
-                              children: <Widget>[
-                                Text(
-                                  "Don't have an account? ",
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                Container(
-                                  child: FlatButton(
-                                    child: Text(
-                                      "Register",
-                                      style: TextStyle(color: Colors.blue),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                RegistrationPage(),
-                                          ));
-                                    },
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 50,
+                                right: 10,
+                                bottom: 10,
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Text(
+                                    "Don't have an account? ",
+                                    style: TextStyle(color: Colors.grey),
                                   ),
-                                ),
-                              ],
+                                  Container(
+                                    child: FlatButton(
+                                      child: Text(
+                                        "Register",
+                                        style: TextStyle(color: Colors.blue),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  RegistrationPage(),
+                                            ));
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
                             )),
                         SizedBox(
                           height: 5,
@@ -301,7 +280,6 @@ class _LoginPage extends State<LoginPage> {
       _errorMsg = "Password must be 6 characters";
       return false;
     } else {
-     
       return true;
     }
   }
@@ -312,12 +290,12 @@ class _LoginPage extends State<LoginPage> {
       onPressed: () {
         if (_successMsg != "") {
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => HomePageWithSideBar(),
-            ));
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => HomePageWithSideBar(),
+              ));
         } else {
-         Navigator.pop(context);   
+          Navigator.pop(context);
         }
       },
     );
