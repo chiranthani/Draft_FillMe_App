@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'navigation/navigation_bloc.dart';
-//import 'model/feedback.dart';
 
 class FeedbackPage extends StatelessWidget with NavigationStates {
   Widget build(BuildContext context) {
@@ -69,12 +68,13 @@ class _FeedbackState extends State<Feedback> {
             .collection('feedbacks')
             .document()
             .setData({'uid': _uid, 'feedback': feedback}).then((onValue) {
+          _addFeedBackContrl.text = "";
           _message = "Successfully Added";
 
           showAlertDialog();
         });
       } catch (e) {
-        _message = e.toString();
+        _message = e.code;
         showAlertDialog();
       }
     }
@@ -94,10 +94,11 @@ class _FeedbackState extends State<Feedback> {
             .collection('feedbacks')
             .document(doc.documentID)
             .updateData({'feedback': feedback});
+        _addFeedBackContrl.text = "";
         _message = "Updated successfully";
         showAlertDialog();
       } catch (e) {
-        _message = e.toString();
+        _message = e.code;
         showAlertDialog();
       }
     }
@@ -110,45 +111,40 @@ class _FeedbackState extends State<Feedback> {
 // editing controller use the update the view field & get the data into database
   void updateData(DocumentSnapshot doc) async {
     await showDialog<String>(
-      builder: (context) {
-        return AlertDialog(
-          content: Row(
-            children: <Widget>[
-              Expanded(
-                child: TextFormField(
-                  controller: _addFeedBackContrl,
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    hintText: feedback,
-                    hintStyle: TextStyle(color: Colors.grey),
+        builder: (context) {
+          return AlertDialog(
+            content: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextFormField(
+                    controller: _addFeedBackContrl,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: feedback,
+                      hintStyle: TextStyle(color: Colors.grey),
+                    ),
                   ),
                 ),
+              ],
+            ),
+            // dialog box has two buttons
+            actions: <Widget>[
+              FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  }),
+              // after press save botton pass the document instance id and firestore field update
+              FlatButton(
+                child: Text("Save"),
+                onPressed: () {
+                  _updateFeedback(doc);
+                },
               ),
             ],
-          ),
-          // dialog box has two buttons
-          actions: <Widget>[
-            FlatButton(
-                child: Text("Cancel"),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => FeedbackPage(),
-                      ));
-                }),
-            // after press save botton pass the document instance id and firestore field update
-            FlatButton(
-              child: Text("Save"),
-              onPressed: () {
-                _updateFeedback(doc);
-              },
-            ),
-          ],
-        );
-      },
-      context: context,
-    );
+          );
+        },
+        context: context);
   }
 
   /// *************** document delete function ************************
@@ -156,8 +152,9 @@ class _FeedbackState extends State<Feedback> {
   void deleteData(DocumentSnapshot doc) async {
     try {
       await firestore.collection('feedbacks').document(doc.documentID).delete();
+      _addFeedBackContrl.text = "";
       _message = "Feedback Delete Successfully";
-      showAlertDialog();
+       showAlertDialog();
     } catch (e) {
       _message = e.code;
       showAlertDialog();
@@ -271,63 +268,78 @@ class _FeedbackState extends State<Feedback> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Feedback"),
-        centerTitle: true,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(8.0),
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
+        appBar: AppBar(
+          title: Text("Feedback"),
+          centerTitle: true,
+        ),
+        body: SingleChildScrollView(
+            child: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Stack(
             children: <Widget>[
-              SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  hintText: "Add Feedback...",
-                  hintStyle: TextStyle(color: Colors.grey),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 12,
+                    ),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        hintText: "Add Feedback...",
+                        hintStyle: TextStyle(color: Colors.grey),
+                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.black),
+                      cursorColor: Colors.black,
+                      controller: _addFeedBackContrl,
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    FlatButton(
+                      child: Text(
+                        "Submit",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      color: Colors.green,
+                      onPressed: _submitFeedback,
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      alignment: Alignment.centerRight,
+                    ),
+                    Expanded(
+                      flex: 0,
+                      child: SizedBox(),
+                    ),
+
+                    //get the logged user entered feedback
+                    StreamBuilder<QuerySnapshot>(
+                        stream: firestore
+                            .collection('feedbacks')
+                            .where('uid', isEqualTo: _uid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Column(
+                                children: snapshot.data.documents
+                                    .map((doc) => buildFeedback(doc))
+                                    .toList());
+                          } else {
+                            return SizedBox();
+                          }
+                        }),
+                  ],
                 ),
-                style: TextStyle(fontSize: 12, color: Colors.black),
-                cursorColor: Colors.black,
-                controller: _addFeedBackContrl,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              FlatButton(
-                child: Text(
-                  "Submit",
-                  style: TextStyle(color: Colors.white),
-                ),
-                color: Colors.green,
-                onPressed: _submitFeedback,
-              ),
-              SizedBox(
-                height: 100,
               ),
             ],
           ),
-          StreamBuilder<QuerySnapshot>(
-              stream: firestore
-                  .collection('feedbacks')
-                  .where('uid', isEqualTo: _uid)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Column(
-                      children: snapshot.data.documents
-                          .map((doc) => buildFeedback(doc))
-                          .toList());
-                } else {
-                  return SizedBox();
-                }
-              }),
-        ],
-      ),
-    );
+        )));
   }
 
   ///***** Message display dialog box */
@@ -335,11 +347,7 @@ class _FeedbackState extends State<Feedback> {
     Widget okButton = FlatButton(
       child: Text("OK"),
       onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => FeedbackPage(),
-            ));
+        Navigator.of(context, rootNavigator: true).pop();
       },
     );
 

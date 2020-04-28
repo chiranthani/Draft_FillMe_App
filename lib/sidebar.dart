@@ -72,7 +72,7 @@ class _SideBarState extends State<SideBar>
             children: <Widget>[
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 1),
                   color: const Color(0xFF262AAA),
                   child: Column(
                     children: <Widget>[

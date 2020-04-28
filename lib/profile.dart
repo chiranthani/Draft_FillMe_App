@@ -36,21 +36,23 @@ class _ProfileState extends State<Profile> {
     currentUser = await FirebaseAuth.instance.currentUser();
     _uid = currentUser.uid;
     _email = currentUser.email;
+    _name = currentUser.displayName;
+    print("test name"+_name);
 
-    try {
-      Firestore.instance
-          .collection('users')
-          .where('uid', isEqualTo: _uid)
-          .snapshots()
-          .listen((data) =>
-              data.documents.forEach((doc) => _name = doc["displayName"]));
+    // try {
+    //   Firestore.instance
+    //       .collection('users')
+    //       .where('uid', isEqualTo: _uid)
+    //       .snapshots()
+    //       .listen((data) =>
+    //           data.documents.forEach((doc) => _name = doc["displayName"]));
 
-      print("name" + _name);
-      print(_email);
-      print(currentUser);
-    } catch (e) {
-      print(e.code);
-    }
+    //   print("name" + _name);
+    //   print(_email);
+    //   print(currentUser);
+    // } catch (e) {
+    //   print(e.code);
+    // }
   }
 
   ListTile displayDetails(DocumentSnapshot doc) {
